@@ -1,0 +1,775 @@
+[
+  {
+    "operation": "risk",
+    "method": "POST",
+    "path": "/risk",
+    "status": 201,
+    "args": [
+      {
+        "type": "$login",
+        "status": "$succeeded",
+        "user": {
+          "id": "synthetic"
+        },
+        "skip_context_validation": true,
+        "skip_request_token_validation": true
+      }
+    ],
+    "request": {
+      "type": "$login",
+      "status": "$succeeded",
+      "user": {
+        "id": "synthetic"
+      },
+      "skip_context_validation": true,
+      "skip_request_token_validation": true
+    },
+    "response": {
+      "type": "$login",
+      "policy": {
+        "action": "challenge",
+        "id": null,
+        "name": null,
+        "revision_id": null
+      },
+      "signals": {},
+      "device": {
+        "fingerprint": null
+      }
+    }
+  },
+  {
+    "operation": "filter",
+    "method": "POST",
+    "path": "/filter",
+    "status": 201,
+    "args": [
+      {
+        "type": "$login",
+        "status": "$attempted",
+        "matching_user_id": "synthetic",
+        "params": {
+          "email": "synthetic@example.invalid"
+        },
+        "skip_context_validation": true,
+        "skip_request_token_validation": true
+      }
+    ],
+    "request": {
+      "type": "$login",
+      "status": "$attempted",
+      "matching_user_id": "synthetic",
+      "params": {
+        "email": "synthetic@example.invalid"
+      },
+      "skip_context_validation": true,
+      "skip_request_token_validation": true
+    },
+    "response": {
+      "type": "$login",
+      "policy": {
+        "action": "challenge",
+        "id": null,
+        "name": null,
+        "revision_id": null
+      },
+      "signals": {},
+      "device": {
+        "fingerprint": null
+      }
+    }
+  },
+  {
+    "operation": "createList",
+    "method": "POST",
+    "path": "/lists",
+    "status": 201,
+    "args": [
+      {
+        "name": "Synthetic list",
+        "color": "$red",
+        "primary_field": "user.id",
+        "description": null
+      }
+    ],
+    "request": {
+      "name": "Synthetic list",
+      "color": "$red",
+      "primary_field": "user.id",
+      "description": null
+    },
+    "response": {
+      "name": "Synthetic list",
+      "color": "$red",
+      "primary_field": "user.id",
+      "description": null,
+      "id": "list-1",
+      "managed": false
+    }
+  },
+  {
+    "operation": "getLists",
+    "method": "GET",
+    "path": "/lists",
+    "status": 200,
+    "args": [],
+    "response": [
+      {
+        "name": "Synthetic list",
+        "color": "$red",
+        "primary_field": "user.id",
+        "description": null,
+        "id": "list-1",
+        "managed": false
+      }
+    ]
+  },
+  {
+    "operation": "updateList",
+    "method": "PUT",
+    "path": "/lists/list-1",
+    "status": 201,
+    "args": [
+      "list-1",
+      {
+        "name": "Synthetic list"
+      }
+    ],
+    "request": {
+      "name": "Synthetic list"
+    },
+    "response": {
+      "name": "Synthetic list",
+      "color": "$red",
+      "primary_field": "user.id",
+      "description": null,
+      "id": "list-1",
+      "managed": false
+    }
+  },
+  {
+    "operation": "getList",
+    "method": "GET",
+    "path": "/lists/list-1?include_size=false",
+    "status": 200,
+    "args": [
+      "list-1",
+      {
+        "include_size": false
+      }
+    ],
+    "response": {
+      "name": "Synthetic list",
+      "color": "$red",
+      "primary_field": "user.id",
+      "description": null,
+      "id": "list-1",
+      "managed": false,
+      "size": 0
+    }
+  },
+  {
+    "operation": "deleteList",
+    "method": "DELETE",
+    "path": "/lists/list-1",
+    "status": 204,
+    "args": [
+      "list-1"
+    ]
+  },
+  {
+    "operation": "queryLists",
+    "method": "POST",
+    "path": "/lists/query",
+    "status": 200,
+    "args": [
+      {
+        "filters": {
+          "$and": [
+            {
+              "field": "archived",
+              "op": "$eq",
+              "value": false
+            },
+            {
+              "$or": [
+                {
+                  "field": "primary_field",
+                  "op": "$eq",
+                  "value": "user.id"
+                }
+              ]
+            }
+          ]
+        },
+        "include_size_label": false
+      }
+    ],
+    "request": {
+      "filters": {
+        "$and": [
+          {
+            "field": "archived",
+            "op": "$eq",
+            "value": false
+          },
+          {
+            "$or": [
+              {
+                "field": "primary_field",
+                "op": "$eq",
+                "value": "user.id"
+              }
+            ]
+          }
+        ]
+      },
+      "include_size_label": false
+    },
+    "response": [
+      {
+        "name": "Synthetic list",
+        "color": "$red",
+        "primary_field": "user.id",
+        "description": null,
+        "id": "list-1",
+        "managed": false
+      }
+    ]
+  },
+  {
+    "operation": "createListItem",
+    "method": "POST",
+    "path": "/lists/list-1/items",
+    "status": 201,
+    "args": [
+      "list-1",
+      {
+        "primary_value": "synthetic",
+        "author": {
+          "type": "$user",
+          "identifier": "synthetic"
+        },
+        "auto_archives_at": null
+      }
+    ],
+    "request": {
+      "primary_value": "synthetic",
+      "author": {
+        "type": "$user",
+        "identifier": "synthetic"
+      },
+      "auto_archives_at": null
+    },
+    "response": {
+      "id": "item-1",
+      "list_id": "list-1",
+      "primary_value": "synthetic",
+      "archived": false,
+      "auto_archives_at": null
+    }
+  },
+  {
+    "operation": "createOrUpdateBatchListItems",
+    "method": "POST",
+    "path": "/lists/list-1/items/batch",
+    "status": 201,
+    "args": [
+      "list-1",
+      {
+        "items": [
+          {
+            "primary_value": "synthetic",
+            "author": {
+              "type": "$user",
+              "identifier": "synthetic"
+            },
+            "auto_archives_at": null
+          }
+        ]
+      }
+    ],
+    "request": {
+      "items": [
+        {
+          "primary_value": "synthetic",
+          "author": {
+            "type": "$user",
+            "identifier": "synthetic"
+          },
+          "auto_archives_at": null
+        }
+      ]
+    },
+    "response": {
+      "total_received": 1,
+      "total_processed": 1,
+      "created": 1,
+      "errored": 0
+    }
+  },
+  {
+    "operation": "queryListItems",
+    "method": "POST",
+    "path": "/lists/list-1/items/query",
+    "status": 200,
+    "args": [
+      "list-1",
+      {
+        "filters": {
+          "$or": [
+            {
+              "field": "archived",
+              "op": "$eq",
+              "value": false
+            }
+          ]
+        },
+        "page": 1,
+        "results_size": 10
+      }
+    ],
+    "request": {
+      "filters": {
+        "$or": [
+          {
+            "field": "archived",
+            "op": "$eq",
+            "value": false
+          }
+        ]
+      },
+      "page": 1,
+      "results_size": 10
+    },
+    "response": {
+      "data": [
+        {
+          "id": "item-1",
+          "list_id": "list-1",
+          "primary_value": "synthetic",
+          "archived": false,
+          "auto_archives_at": null
+        }
+      ]
+    }
+  },
+  {
+    "operation": "countListItems",
+    "method": "POST",
+    "path": "/lists/list-1/items/count",
+    "status": 200,
+    "args": [
+      "list-1",
+      {
+        "filters": {
+          "$or": [
+            {
+              "field": "archived",
+              "op": "$eq",
+              "value": false
+            }
+          ]
+        }
+      }
+    ],
+    "request": {
+      "filters": {
+        "$or": [
+          {
+            "field": "archived",
+            "op": "$eq",
+            "value": false
+          }
+        ]
+      }
+    },
+    "response": {
+      "total_count": 0
+    }
+  },
+  {
+    "operation": "updateListItem",
+    "method": "PUT",
+    "path": "/lists/list-1/items/item-1",
+    "status": 201,
+    "args": [
+      "list-1",
+      "item-1",
+      {
+        "comment": "Reviewed"
+      }
+    ],
+    "request": {
+      "comment": "Reviewed"
+    },
+    "response": {
+      "id": "item-1",
+      "list_id": "list-1",
+      "primary_value": "synthetic",
+      "archived": false,
+      "auto_archives_at": null,
+      "comment": "Reviewed"
+    }
+  },
+  {
+    "operation": "getListItem",
+    "method": "GET",
+    "path": "/lists/list-1/items/item-1",
+    "status": 200,
+    "args": [
+      "list-1",
+      "item-1"
+    ],
+    "response": {
+      "id": "item-1",
+      "list_id": "list-1",
+      "primary_value": "synthetic",
+      "archived": false,
+      "auto_archives_at": null
+    }
+  },
+  {
+    "operation": "archiveListItem",
+    "method": "DELETE",
+    "path": "/lists/list-1/items/item-1/archive",
+    "status": 204,
+    "args": [
+      "list-1",
+      "item-1"
+    ]
+  },
+  {
+    "operation": "unarchiveListItem",
+    "method": "PUT",
+    "path": "/lists/list-1/items/item-1/unarchive",
+    "status": 204,
+    "args": [
+      "list-1",
+      "item-1",
+      {
+        "auto_archives_at": null
+      }
+    ],
+    "request": {
+      "auto_archives_at": null
+    }
+  },
+  {
+    "operation": "getUserPrivacyDeprecated",
+    "method": "POST",
+    "path": "/privacy/users/synthetic",
+    "status": 202,
+    "args": [
+      "synthetic"
+    ]
+  },
+  {
+    "operation": "deleteUserPrivacyDeprecated",
+    "method": "DELETE",
+    "path": "/privacy/users/synthetic",
+    "status": 202,
+    "args": [
+      "synthetic"
+    ]
+  },
+  {
+    "operation": "getUserPrivacy",
+    "method": "POST",
+    "path": "/privacy/users",
+    "status": 202,
+    "args": [
+      {
+        "identifier": "synthetic",
+        "identifier_type": "$id"
+      }
+    ],
+    "request": {
+      "identifier": "synthetic",
+      "identifier_type": "$id"
+    }
+  },
+  {
+    "operation": "deleteUserPrivacy",
+    "method": "DELETE",
+    "path": "/privacy/users",
+    "status": 202,
+    "args": [
+      {
+        "identifier": "synthetic",
+        "identifier_type": "$id"
+      }
+    ],
+    "request": {
+      "identifier": "synthetic",
+      "identifier_type": "$id"
+    }
+  },
+  {
+    "operation": "queryEvents",
+    "method": "POST",
+    "path": "/events/query",
+    "status": 200,
+    "args": [
+      {
+        "filters": {
+          "$and": [
+            {
+              "field": "type",
+              "op": "$eq",
+              "value": "$login"
+            },
+            {
+              "$or": [
+                {
+                  "field": "user.id",
+                  "op": "$eq",
+                  "value": "synthetic"
+                }
+              ]
+            }
+          ]
+        },
+        "query_type": "$records_with_count",
+        "results_size": 10
+      }
+    ],
+    "request": {
+      "filters": {
+        "$and": [
+          {
+            "field": "type",
+            "op": "$eq",
+            "value": "$login"
+          },
+          {
+            "$or": [
+              {
+                "field": "user.id",
+                "op": "$eq",
+                "value": "synthetic"
+              }
+            ]
+          }
+        ]
+      },
+      "query_type": "$records_with_count",
+      "results_size": 10
+    },
+    "response": {
+      "data": [],
+      "total_count": 0
+    }
+  },
+  {
+    "operation": "getEventSchema",
+    "method": "GET",
+    "path": "/events/schema",
+    "status": 200,
+    "args": [],
+    "response": {
+      "fields": [
+        {
+          "field": "user.id",
+          "op": [
+            "$eq"
+          ],
+          "func": [
+            "$top_k"
+          ],
+          "type": "string",
+          "nice_name": "User ID",
+          "description": "User ID sent by the client to Castle"
+        }
+      ],
+      "buckets": []
+    }
+  },
+  {
+    "operation": "groupEvents",
+    "method": "POST",
+    "path": "/events/group",
+    "status": 200,
+    "args": [
+      {
+        "filters": {
+          "$and": [
+            {
+              "field": "type",
+              "op": "$eq",
+              "value": "$login"
+            },
+            {
+              "$or": [
+                {
+                  "field": "user.id",
+                  "op": "$eq",
+                  "value": "synthetic"
+                }
+              ]
+            }
+          ]
+        },
+        "group_by": {
+          "fields": [
+            {
+              "field": "user.id"
+            }
+          ]
+        },
+        "columns": [
+          {
+            "name": "Count",
+            "field": "user.id",
+            "func": "$count"
+          }
+        ]
+      }
+    ],
+    "request": {
+      "filters": {
+        "$and": [
+          {
+            "field": "type",
+            "op": "$eq",
+            "value": "$login"
+          },
+          {
+            "$or": [
+              {
+                "field": "user.id",
+                "op": "$eq",
+                "value": "synthetic"
+              }
+            ]
+          }
+        ]
+      },
+      "group_by": {
+        "fields": [
+          {
+            "field": "user.id"
+          }
+        ]
+      },
+      "columns": [
+        {
+          "name": "Count",
+          "field": "user.id",
+          "func": "$count"
+        }
+      ]
+    },
+    "response": {
+      "data": [
+        {
+          "user.id": "synthetic",
+          "Count": 2
+        }
+      ],
+      "total_count": 1
+    }
+  },
+  {
+    "operation": "ipsLookupSingle",
+    "method": "GET",
+    "path": "/ips/203.0.113.42",
+    "status": 200,
+    "args": [
+      "203.0.113.42"
+    ],
+    "response": {
+      "address": "203.0.113.42",
+      "type": "ipv4",
+      "asn": null,
+      "location": {
+        "continent_code": null,
+        "country_code": "DE"
+      },
+      "tunnels": [
+        {
+          "type": "vpn",
+          "operator": "Synthetic VPN",
+          "last_seen_at": "2026-07-01T14:23:00Z",
+          "tier": "commercial",
+          "proxy_type": null
+        }
+      ]
+    }
+  },
+  {
+    "operation": "ipsLookupBatch",
+    "method": "POST",
+    "path": "/ips/query",
+    "status": 200,
+    "args": [
+      {
+        "ips": [
+          "203.0.113.42"
+        ]
+      }
+    ],
+    "request": {
+      "ips": [
+        "203.0.113.42"
+      ]
+    },
+    "response": {
+      "results": [
+        {
+          "address": "203.0.113.42",
+          "type": "ipv4",
+          "asn": null,
+          "location": {
+            "continent_code": null,
+            "country_code": "DE"
+          },
+          "tunnels": [
+            {
+              "type": "vpn",
+              "operator": "Synthetic VPN",
+              "last_seen_at": "2026-07-01T14:23:00Z",
+              "tier": "commercial",
+              "proxy_type": null
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "total": 1,
+        "valid": 1
+      }
+    }
+  },
+  {
+    "operation": "getLatestIpDatasetExportMetadata",
+    "method": "HEAD",
+    "path": "/ips/downloads/proxies/7d.jsonl.gz",
+    "status": 200,
+    "args": [
+      "proxies",
+      "7d",
+      "jsonl"
+    ],
+    "headers": {
+      "X-Snapshot-Row-Count": "42",
+      "X-Snapshot-Byte-Size": "1024",
+      "X-Snapshot-Checksum": "synthetic-checksum",
+      "X-Snapshot-Generated-At": "2026-11-05T00:00:00Z"
+    }
+  },
+  {
+    "operation": "downloadIpDatasetExport",
+    "method": "GET",
+    "path": "/ips/downloads/proxies/7d.jsonl.gz",
+    "status": 302,
+    "args": [
+      "proxies",
+      "7d",
+      "jsonl"
+    ],
+    "headers": {
+      "Location": "https://download.example.invalid/synthetic.gz?signature=synthetic"
+    }
+  }
+]
