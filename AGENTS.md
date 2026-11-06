@@ -12,6 +12,8 @@ The SDK is complete for a checked-in specification when:
 
 Generate all API families by default and keep endpoint coverage driven by the specification. Add handwritten behavior only where generation does not satisfy the shared client contract. Clearly distinguish specification coverage, locally verified behavior, and live-service verification.
 
+Keep documentation independent of operation counts and exhaustive API lists. Link to the specification or generated API documentation for coverage, and use concrete operations only where examples or behavior need them.
+
 ## API specification
 
 - Treat the [official API reference](https://reference.castle.io/) as the source of truth for every API family.
@@ -37,12 +39,12 @@ Evaluate these details against the downloaded schema before accepting generated 
 
 - The base URL is `https://api.castle.io/v1`. Risk uses `POST /risk` and returns `201` on success.
 - Basic authentication uses an empty username and the API secret as the password.
-- Risk has eight event variants. The shared request marks status required, while some event variants specify defaults. Custom status permits null.
+- Check event variants against their schema discriminators. Risk's shared request marks status required, while some event variants specify defaults. Custom status permits null.
 - Explicit validation skip flags allow omission of the request token or context. Skipping request token validation prevents risk score calculation. Missing scores must remain distinguishable from zero scores.
 - Request `BaseRequest.properties` has an additional object level compared with response `Properties`. Verify this against the official schema and SDK examples rather than flattening it for convenience.
 - Context headers are ordered pairs, with string, boolean, or integer scalar values in the schema. Check how the generator represents these tuples and unions.
 - Changesets include known fields, custom keys, and alternative value shapes. Authentication-method changeset prose permits null endpoints although the referenced enum does not declare nullability. Record the chosen interpretation and verify omission versus explicit null.
-- The documented Risk failures are `401`, `403`, `422`, `429`, and `500`. Only `422` has a body schema in the inspected endpoint definition. Preserve HTTP status even for empty or malformed error bodies.
+- Error responses do not always declare a body schema. Preserve HTTP status even for empty or malformed error bodies.
 
 ## Go implementation and validation
 
@@ -60,7 +62,7 @@ Evaluate these details against the downloaded schema before accepting generated 
 - Default tests must not require live credentials or access to Castle services. Use synthetic fixture data.
 - Use named, table-driven subtests with `t.Parallel()` when cases are independent. Format structured table entries across multiple lines with field names. Do not compress nested request fixtures into one-line literals.
 - Give parallel cases their own mutable state and HTTP fixtures. A parent's deferred server closure runs before its parallel subtests. Use case-owned fixtures or `t.Cleanup`, and ensure assertions run after the requests they verify.
-- Once the Go module exists, format handwritten Go changes with `gofmt` and run `go test ./...` and `go vet ./...` before completing implementation changes. Run `go test -race ./...` when adding or changing parallel tests. Verify regeneration leaves generated files unchanged. Report checks that could not run.
+- Once the Go module exists, format handwritten Go changes with `gofmt` and run `go test -race -count=1 ./...` and `go vet ./...` before completing implementation changes. Verify regeneration leaves generated files unchanged. Report checks that could not run.
 
 ## Language
 

@@ -2,60 +2,65 @@
 
 An unofficial Go SDK for [Castle](https://castle.io). Requires Go 1.27.3 or later.
 
-The SDK covers all 27 operations in the checked-in official specification,
-including Risk, Filter, Lists and List Items, Privacy, Events, IP Intelligence,
-and IP dataset downloads. Deprecated Privacy operations are included.
 Request models, response models, and endpoint calls are generated from Castle's
-[official OpenAPI definition](https://reference.castle.io/v1/api.json).
+[official OpenAPI definition](https://reference.castle.io/v1/api.json), with shared
+authentication, configuration, and error handling.
 
 ## Install
 
 ```sh
-go get github.com/fchimpan/castle-go@v0.0.1
+go get github.com/fchimpan/castle-go@latest
 ```
 
-## Assess an event
+## Use the client
 
-Import the root client and the generated models:
+Set `CASTLE_API_SECRET` to your API secret. This example fetches your lists and
+prints their IDs and names:
 
 ```go
+package main
+
 import (
 	"context"
+	"fmt"
+	"log"
+	"os"
+	"time"
 
 	castle "github.com/fchimpan/castle-go"
-	"github.com/fchimpan/castle-go/api"
 )
 
-func assessLogin(ctx context.Context, secret, token string, origin api.Context) (*api.RiskResponse, error) {
-	client, err := castle.NewClient(secret, castle.Config{})
+func main() {
+	client, err := castle.NewClient(os.Getenv("CASTLE_API_SECRET"), castle.Config{})
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
-	var event api.Risk
-	if err := event.FromLoginRiskRequest(api.LoginRiskRequest{
-		Context:      &origin,
-		RequestToken: new(token),
-		Status:       api.LoginRiskRequestStatusSucceeded,
-		User: api.UserForMonitorAndRisk{
-			Id: "user-123",
-		},
-	}); err != nil {
-		return nil, err
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	result, err := client.GetLists(ctx)
+	if err != nil {
+		log.Fatal(err)
 	}
-	return client.Risk(ctx, event)
+	for _, list := range *result.JSON200 {
+		fmt.Println(list.Id, list.Name)
+	}
 }
 ```
 
-Reuse a client across requests. Supply the request token from Castle's client SDK
-and the original request's IP address and ordered headers in `api.Context`.
-The generated header scalar union supports strings, booleans, and integers.
-See [the executable example](example_test.go) for header construction and result handling.
+Save the code as `main.go` in your application and run `go run .`.
+Reuse the client across requests in a long-running application.
+Methods follow the OpenAPI operation names with an initial capital. Request and
+response types live in the `api` package. See the [generated client](endpoints.gen.go)
+for available methods and the [generated models](api/client.gen.go) for their types.
 
-The generated `From...RiskRequest` methods set the event discriminator. Risk
-supports challenge, registration, login, profile update, profile reset,
-transaction, logout, and custom events. Set status explicitly. The generated
+For an assessment example with request models, context headers, and policy
+handling, see [the executable example](example_test.go). Supply the request token
+from Castle's client SDK and context from the originating request. The generated
 models do not apply server defaults or validate every schema constraint.
+
+## Read responses
 
 Each method returns a generated response envelope. Read `JSON200` or `JSON201`
 for the typed payload, `Body` for the original response bytes, and `StatusCode()`
@@ -65,25 +70,7 @@ Check whether `Scores` is present before reading a score. An absent
 score is different from a score of zero. The response union preserves unknown
 JSON fields; a typed projection can discard fields outside its schema.
 
-## Call other APIs
-
-Use the same client for every operation. For example:
-
-```go
-lists, err := client.GetLists(ctx)
-if err != nil {
-	return err
-}
-for _, list := range *lists.JSON200 {
-	fmt.Println(list.Id, list.Name)
-}
-```
-
-Methods use the OpenAPI operation names with an initial capital, such as
-`CreateList`, `QueryListItems`, `GetUserPrivacy`, `QueryEvents`, and
-`IpsLookupBatch`. Their request and response types live in `api`.
-Bodyless successes, including Privacy's 202 and deletion's 204, return an
-envelope with the status and headers.
+Bodyless successes return an envelope with the status and headers.
 
 `QueryEventsWithBody(ctx, "text/csv", reader)` supports the documented CSV
 mode. The official example sends a JSON query with that content type. Read the
@@ -135,20 +122,19 @@ for the authentication, redirect, and error behavior described here.
 
 ```sh
 go generate ./...
-go test ./...
+go test -race -count=1 ./...
 go vet ./...
-go test -race ./...
 ```
 
-Generation uses the checked-in schema and pinned oapi-codegen v2.8.2. It does not
+Generation uses the checked-in schema and pinned oapi-codegen version. It does not
 fetch a newer schema or select a newer tool version. Tests use synthetic data and
 local HTTP servers, without Castle credentials. CI also checks for stale generated
 code in a separate job. Tests run with the race detector enabled, and `go vet`
 runs in its own job. Read [the testing guide](TESTING.md) for test design and
 [the generation guide](api/GENERATION.md) before updating the snapshot.
 
-All 27 operations have local HTTP fixtures that check requests and decoded
-responses. These tests do not verify live Castle accounts or service behavior.
+Local HTTP fixtures check requests and decoded responses against the checked-in
+specification. These tests do not verify live Castle accounts or service behavior.
 
 ## Migration from the unreleased Risk-only prototype
 

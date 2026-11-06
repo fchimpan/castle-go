@@ -57,15 +57,14 @@ headers, download redirects, and errors before and after transport.
 ## Run checks
 
 ```sh
-go test ./...
+go test -race -count=1 ./...
 go vet ./...
-go test -race ./...
 go generate ./...
 git diff --exit-code
 ```
 
 CI runs generation verification, tests with race detection, and static analysis
-in three independent jobs. Tests use `-count=1` to bypass cached results.
+in separate jobs. Tests use `-count=1` to bypass cached results.
 Do not use a coverage percentage as the sole measure
 of test quality.
 
