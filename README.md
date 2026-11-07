@@ -118,6 +118,28 @@ declared in the official schema.
 The generated `api.Client` and `api.ClientWithResponses` are low-level clients. Use the root `castle.Client`
 for the authentication, redirect, and error behavior described here.
 
+## Verify webhooks
+
+Use the exact raw request body and the `X-Castle-Signature` header before
+parsing or processing a webhook:
+
+```go
+err := castle.VerifyWebhookSignature(rawBody, r.Header.Get("X-Castle-Signature"), apiSecret)
+if errors.Is(err, castle.ErrWebhookVerification) {
+    http.Error(w, "Invalid webhook signature", http.StatusBadRequest)
+    return
+}
+```
+
+Read `rawBody` with a bounded reader such as `http.MaxBytesReader`, and reject
+read errors before verification. Use the API secret selected for webhook signing
+in Castle. Do not reserialize JSON before checking the signature.
+Following [Castle's webhook specification](https://docs.castle.io/docs/webhooks),
+verification compares the standard Base64 HMAC-SHA256 signature in constant time.
+Empty secrets and missing, malformed, or mismatched signatures return
+`ErrWebhookVerification`, without including sensitive values. Verification does
+not parse the payload or prevent replay of a previously signed delivery.
+
 ## Regenerate and test
 
 ```sh

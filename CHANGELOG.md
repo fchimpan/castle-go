@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.0
+
+- Add `VerifyWebhookSignature` and `ErrWebhookVerification` for Castle webhook
+  authentication using raw body bytes and the selected signing secret. This
+  additive feature requires no migration.
+
 ## v0.0.1
 
 Initial release of the unofficial Castle SDK for Go. Requires Go 1.27.3 or later.
